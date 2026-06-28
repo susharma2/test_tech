@@ -64,7 +64,7 @@
        a mailto: link so the form is never silently broken.
     ─────────────────────────────────────────────────────────── */
 
-    const FORMSPREE_ID = ''; // ← paste your Formspree form ID here
+    const FORMSPREE_ID = 'YOUR_FORM_ID'; // ← paste your Formspree form ID here
 
     if (FORMSPREE_ID) {
       return fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
