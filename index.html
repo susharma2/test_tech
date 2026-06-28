@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)file:///C:/Users/sunil/Downloads/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verifcore Consultants – Semiconductor Design Verification Services</title>
+  <meta name="description" content="Expert design verification services for the semiconductor industry. One consultant, clear technical scope, results you can rely on before tapeout.">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./index_files/css2" rel="stylesheet">
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f1;
+      color: #1a211e;
+      line-height: 1.6;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── TOKENS ───────────────────────────────────────────────────── */
+    :root {
+      --bg:        #f0f2f1;
+      --surface:   #ffffff;
+      --surface2:  #e8ebe9;
+      --border:    #d0d5d2;
+      --accent:    #0a6e4f;        /* deep semiconductor teal-green */
+      --accent2:   #12a374;        /* lighter accent */
+      --text:      #1a211e;
+      --muted:     #5a6562;
+      --display:   'Space Grotesk', sans-serif;
+      --radius:    14px;
+      --shadow:    0 2px 16px rgba(0,0,0,.07);
+    }
+
+    /* ─── LAYOUT UTILITIES ──────────────────────────────────────────── */
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+
+    /* ─── TYPOGRAPHY ────────────────────────────────────────────────── */
+    .kicker {
+      font-family: var(--display);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1,h2,h3,h4 { font-family: var(--display); line-height: 1.2; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.5rem); font-weight: 600; }
+    h3 { font-size: 1.15rem; font-weight: 600; }
+    p  { color: var(--muted); }
+    .lead { font-size: 1.1rem; color: var(--muted); max-width: 600px; }
+
+    /* ─── BUTTONS ────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px;
+      border-radius: 999px;
+      font-family: var(--display);
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      border: 2px solid transparent;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #085c41; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,110,79,.25); }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--text);
+      color: var(--text);
+    }
+    .btn-outline:hover { background: var(--text); color: #fff; }
+
+    /* ─── NAV ────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(240,242,241,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { font-size: .85rem; padding: 9px 22px; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); margin: 5px 0;
+      transition: .3s;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────────────── */
+    #hero {
+      background: var(--bg);
+      padding: 100px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Decorative circuit-like ring */
+    #hero::before {
+      content: '';
+      position: absolute;
+      right: -160px; top: -160px;
+      width: 560px; height: 560px;
+      border-radius: 50%;
+      border: 1px solid rgba(10,110,79,.15);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      right: -80px; top: -80px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      border: 1px solid rgba(10,110,79,.1);
+      pointer-events: none;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(10,110,79,.1);
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    .hero-tag svg { width: 12px; height: 12px; fill: var(--accent); }
+    .hero h1 { margin-bottom: 20px; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero .lead { margin-bottom: 36px; }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* Stats strip */
+    .hero-stats {
+      display: flex; gap: 32px;
+      margin-top: 52px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat-item {}
+    .stat-num {
+      font-family: var(--display);
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-label { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+
+    /* Hero visual card */
+    .hero-card {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .hero-card-title {
+      font-family: var(--display);
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .service-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: var(--bg);
+      margin-bottom: 10px;
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .service-chip .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent2);
+      flex-shrink: 0;
+    }
+    .chip-tag {
+      margin-left: auto;
+      font-size: .7rem;
+      color: var(--accent);
+      background: rgba(10,110,79,.08);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    /* ─── SERVICES ────────────────────────────────────────────────────── */
+    #services { background: var(--surface); }
+    .section-header { margin-bottom: 52px; }
+    .section-header.center { text-align: center; }
+    .section-header.center .lead { margin: 16px auto 0; }
+    .section-header h2 { margin-top: 8px; }
+    .section-header p { margin-top: 16px; }
+
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .service-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: box-shadow .25s, transform .25s;
+    }
+    .service-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.09); transform: translateY(-3px); }
+    .svc-num {
+      font-family: var(--display);
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .1em;
+      margin-bottom: 14px;
+    }
+    .svc-icon {
+      width: 40px; height: 40px;
+      background: rgba(10,110,79,.1);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .svc-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.8; }
+    .service-card h3 { margin-bottom: 10px; font-size: 1rem; }
+    .service-card p  { font-size: .88rem; }
+
+    /* ─── APPROACH ────────────────────────────────────────────────────── */
+    #approach { background: var(--bg); }
+    .approach-text h2 { margin-bottom: 20px; }
+    .approach-text p  { margin-bottom: 16px; font-size: .95rem; }
+    .approach-list { list-style: none; margin-top: 28px; }
+    .approach-list li {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .92rem;
+    }
+    .approach-list li:last-child { border-bottom: none; }
+    .approach-list .num {
+      font-family: var(--display);
+      font-weight: 700;
+      color: var(--accent);
+      font-size: .78rem;
+      min-width: 28px;
+      margin-top: 2px;
+    }
+
+    /* Visual panel */
+    .approach-panel {
+      background: var(--text);
+      color: #fff;
+      border-radius: 20px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .approach-panel::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(18,163,116,.15);
+    }
+    .panel-label {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 20px;
+    }
+    .panel-metric {
+      font-family: var(--display);
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .panel-sub { font-size: .88rem; color: rgba(255,255,255,.55); margin-bottom: 36px; }
+    .panel-divider { border: none; border-top: 1px solid rgba(255,255,255,.1); margin: 24px 0; }
+    .panel-quote {
+      font-size: .92rem;
+      font-style: italic;
+      color: rgba(255,255,255,.7);
+      line-height: 1.6;
+    }
+    .panel-tools {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px;
+    }
+    .tool-badge {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--accent2);
+      border: 1px solid rgba(18,163,116,.35);
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    /* ─── TESTIMONIALS ────────────────────────────────────────────────── */
+    #testimonials { background: var(--surface); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .tcard {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .tcard-quote {
+      font-size: .92rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .tcard-quote::before { content: '"'; font-size: 1.5rem; color: var(--accent); line-height: .8; display: block; margin-bottom: 8px; }
+    .tcard-author { display: flex; gap: 12px; align-items: center; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: .88rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .author-name { font-weight: 600; font-size: .88rem; }
+    .author-role { font-size: .78rem; color: var(--muted); }
+
+    /* ─── FAQ ─────────────────────────────────────────────────────────── */
+    #faq { background: var(--bg); }
+    .faq-list { max-width: 760px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0;
+      background: none; border: none; cursor: pointer;
+      text-align: left;
+      font-family: var(--display);
+      font-size: .97rem;
+      font-weight: 600;
+      color: var(--text);
+      gap: 16px;
+    }
+    .faq-icon {
+      width: 24px; height: 24px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: transform .25s, background .25s;
+    }
+    .faq-icon svg { width: 12px; height: 12px; stroke: var(--text); stroke-width: 2; transition: stroke .25s; }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      font-size: .9rem; color: var(--muted);
+      transition: max-height .35s ease, padding .35s;
+      line-height: 1.7;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+    .faq-item.open .faq-icon { background: var(--accent); border-color: var(--accent); transform: rotate(45deg); }
+    .faq-item.open .faq-icon svg { stroke: #fff; }
+
+    /* ─── CONTACT ─────────────────────────────────────────────────────── */
+    #contact { background: var(--surface); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+    .contact-info h2 { margin-bottom: 16px; }
+    .contact-info p  { margin-bottom: 28px; }
+    .contact-detail {
+      display: flex; gap: 12px; align-items: flex-start;
+      margin-bottom: 18px; font-size: .9rem;
+    }
+    .contact-detail svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.8; flex-shrink: 0; margin-top: 1px; }
+    .contact-detail a { color: var(--muted); }
+    .contact-detail a:hover { color: var(--accent); }
+
+    /* Form */
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: .8rem; font-weight: 600; color: var(--text); }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      -webkit-appearance: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-submit { margin-top: 4px; }
+    .form-note { font-size: .78rem; color: var(--muted); margin-top: 10px; }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────────── */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,.55);
+      padding: 48px 0 32px;
+    }
+    .footer-inner {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .footer-brand-name {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .footer-brand p { font-size: .85rem; line-height: 1.7; }
+    .footer-col h4 {
+      font-family: var(--display);
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,.4);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a { font-size: .88rem; color: rgba(255,255,255,.55); transition: color .2s; }
+    .footer-col a:hover { color: var(--accent2); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 28px; font-size: .8rem; flex-wrap: wrap; gap: 10px;
+    }
+    .footer-bottom a { color: rgba(255,255,255,.4); }
+    .footer-bottom a:hover { color: #fff; }
+
+    /* ─── SUCCESS MESSAGE ──────────────────────────────────────────────── */
+    .form-success {
+      display: none;
+      background: rgba(10,110,79,.08);
+      border: 1px solid rgba(10,110,79,.25);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-card { display: none; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 620px) {
+      section { padding: 56px 0; }
+      .services-grid { grid-template-columns: 1fr; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: block; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .hero-stats { gap: 20px; }
+      .hero h1 { font-size: 2rem; }
+    }
+
+    /* Mobile nav drawer */
+    #mobile-nav {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+    }
+    #mobile-nav.open { display: block; }
+    .mn-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.45);
+    }
+    .mn-drawer {
+      position: absolute; top: 0; right: 0;
+      width: min(320px, 85vw);
+      height: 100%;
+      background: var(--surface);
+      padding: 32px 28px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .mn-close {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.4rem; color: var(--text);
+      margin-bottom: 20px; align-self: flex-end;
+    }
+    .mn-links a {
+      display: block; padding: 12px 0;
+      font-family: var(--display);
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+    .mn-links a:hover { color: var(--accent); }
+    .mn-cta { margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="file:///C:/Users/sunil/Downloads/index.html#" class="nav-logo">Verifcore Consultants</a>
+      <ul class="nav-links">
+        <li><a href="file:///C:/Users/sunil/Downloads/index.html#services">Services</a></li>
+        <li><a href="file:///C:/Users/sunil/Downloads/index.html#approach">Approach</a></li>
+        <li><a href="file:///C:/Users/sunil/Downloads/index.html#testimonials">Clients</a></li>
+        <li><a href="file:///C:/Users/sunil/Downloads/index.html#faq">FAQ</a></li>
+      </ul>
+      <a href="file:///C:/Users/sunil/Downloads/index.html#contact" class="btn btn-primary nav-cta">Get in Touch</a>
+      <button class="hamburger" id="menuBtn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div id="mobile-nav">
+  <div class="mn-backdrop" id="mnBackdrop"></div>
+  <div class="mn-drawer">
+    <button class="mn-close" id="mnClose">✕</button>
+    <div class="mn-links">
+      <a href="file:///C:/Users/sunil/Downloads/index.html#services">Services</a>
+      <a href="file:///C:/Users/sunil/Downloads/index.html#approach">Approach</a>
+      <a href="file:///C:/Users/sunil/Downloads/index.html#testimonials">Clients</a>
+      <a href="file:///C:/Users/sunil/Downloads/index.html#faq">FAQ</a>
+      <a href="file:///C:/Users/sunil/Downloads/index.html#contact">Contact</a>
+    </div>
+    <a href="file:///C:/Users/sunil/Downloads/index.html#contact" class="btn btn-primary mn-cta">Get in Touch</a>
+  </div>
+</div>
+
+<!-- ─── HERO ───────────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero">
+        <div class="hero-tag">
+          <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="6"></circle></svg>
+          Semiconductor Design Verification
+        </div>
+        <h1>Cutting-edge work on<br><em>Design Verification</em></h1>
+        <p class="lead">Design verification for semiconductor teams that need more than a checklist. One consultant, clear technical scope, and results you can rely on before tapeout.</p>
+        <div class="hero-actions">
+          <a href="file:///C:/Users/sunil/Downloads/index.html#services" class="btn btn-primary">Explore Our Services</a>
+          <a href="file:///C:/Users/sunil/Downloads/index.html#contact" class="btn btn-outline">Start a Project</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">20+</div>
+            <div class="stat-label">Years domain experience</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1</div>
+            <div class="stat-label">Full tapeout, zero surprises</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">First-pass silicon focus</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual card (desktop only) -->
+      <div class="hero-card">
+        <div class="hero-card-title">Core Capabilities</div>
+        <div class="service-chip">
+          <span class="dot"></span>
+          UVM / SystemVerilog Testbenches
+          <span class="chip-tag">Expert</span>
+        </div>
+        <div class="service-chip">
+          <span class="dot"></span>
+          Functional Coverage Design
+          <span class="chip-tag">Expert</span>
+        </div>
+        <div class="service-chip">
+          <span class="dot"></span>
+          Assertion-Based Verification
+          <span class="chip-tag">Expert</span>
+        </div>
+        <div class="service-chip">
+          <span class="dot"></span>
+          Regression Triage &amp; Debug
+          <span class="chip-tag">Expert</span>
+        </div>
+        <div class="service-chip">
+          <span class="dot"></span>
+          Pre-Silicon Analysis
+          <span class="chip-tag">Expert</span>
+        </div>
+        <div class="service-chip">
+          <span class="dot"></span>
+          Sign-Off Review
+          <span class="chip-tag">Expert</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SERVICES ─────────────────────────────────────────── -->
+<section id="services">
+  <div class="container">
+    <div class="section-header center">
+      <div class="kicker">Design Verification Services</div>
+      <h2>Verification is not a checkbox.<br>It's a conversation with the silicon you haven't seen yet.</h2>
+      <p class="lead">Most verification shops sell checklists. We sell judgment — the kind that catches bugs before simulation even starts.</p>
+    </div>
+    <div class="services-grid">
+
+      <div class="service-card" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="svc-num">01</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path></svg>
+        </div>
+        <h3>Pre-Silicon Analysis</h3>
+        <p>Catch corner-case bugs before RTL freeze. Fewer respins, faster path to tapeout.</p>
+      </div>
+
+      <div class="service-card" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="svc-num">02</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+        </div>
+        <h3>Testbench Architecture</h3>
+        <p>Engineered for reuse, coverage closure, and debug clarity from day one.</p>
+      </div>
+
+      <div class="service-card" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="svc-num">03</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3zM9 9h6v6H9z"></path></svg>
+        </div>
+        <h3>Functional Coverage Design</h3>
+        <p>Intent-driven coverage that maps directly to your verification plan, not random exploration.</p>
+      </div>
+
+      <div class="service-card" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="svc-num">04</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"></path><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"></path></svg>
+        </div>
+        <h3>Assertion-Based Verification</h3>
+        <p>Formal-lite checks embedded in simulation for real-time protocol and data integrity verification.</p>
+      </div>
+
+      <div class="service-card" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="svc-num">05</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </div>
+        <h3>Regression Triage</h3>
+        <p>Find the root cause fast — not just which failure failed, but why.</p>
+      </div>
+
+      <div class="service-card" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="svc-num">06</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        </div>
+        <h3>Sign-Off Review</h3>
+        <p>Independent technical review of your verification closure data and coverage metrics.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── APPROACH ──────────────────────────────────────────── -->
+<section id="approach">
+  <div class="container">
+    <div class="grid-2">
+
+      <div class="approach-text">
+        <div class="kicker">Our Approach</div>
+        <h2>Verification from a single source</h2>
+        <p>One consultant. Two decades of domain experience. Verification work that understands what your tapeout actually needs, not just what a checklist demands.</p>
+        <p>We work directly with your team — no layers, no delays, just clear technical judgment applied to the problem in front of us.</p>
+        <ul class="approach-list">
+          <li><span class="num">01</span><span>Build the test plan <strong>before</strong> writing a single line of SystemVerilog.</span></li>
+          <li><span class="num">02</span><span>Every test targets a coverage gap. No wasted cycles on already-verified paths.</span></li>
+          <li><span class="num">03</span><span>Assertions catch what directed tests miss — written for the corner cases that hurt.</span></li>
+          <li><span class="num">04</span><span>Regression suite stays lean. Fast feedback without sacrificing coverage.</span></li>
+          <li><span class="num">05</span><span>Clear documentation and milestone-based delivery — no ambiguity at sign-off.</span></li>
+        </ul>
+      </div>
+
+      <div class="approach-panel" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="panel-label">Why Verifcore</div>
+        <div class="panel-metric">20+</div>
+        <div class="panel-sub">Years of hands-on tapeout experience</div>
+        <hr class="panel-divider">
+        <div class="panel-quote">
+          "One missed bug can wipe out your margin. A targeted verification scope costs a fraction of a respin and keeps first-pass success likely."
+        </div>
+        <div class="panel-tools">
+          <span class="tool-badge">UVM</span>
+          <span class="tool-badge">SystemVerilog</span>
+          <span class="tool-badge">SVA</span>
+          <span class="tool-badge">Questasim</span>
+          <span class="tool-badge">ModelSim</span>
+          <span class="tool-badge">Cadence</span>
+          <span class="tool-badge">Synopsys</span>
+          <span class="tool-badge">UART / APB / AXI</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─────────────────────────────────────── -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-header center">
+      <div class="kicker">Results That Speak</div>
+      <h2>1 full tapeout, zero surprises</h2>
+      <p class="lead">Early-stage partnerships that delivered first-pass silicon success for semiconductor teams.</p>
+    </div>
+    <div class="testimonials-grid">
+
+      <div class="tcard" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="tcard-quote">We brought Verifcore onto a tight UVM project late in the cycle. The consultant caught three critical protocol mismatches that our internal team had missed. No fanfare, just clean debug reports.</div>
+        <div class="tcard-author">
+          <div class="author-avatar">RP</div>
+          <div>
+            <div class="author-name">Ravi Patel</div>
+            <div class="author-role">Verification Lead, ChipStart Labs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="tcard-quote">The coverage closure analysis we received was concise and actionable. It saved us two full weeks of simulation time on a complex SoC block. I'd hire Verifcore again without hesitation.</div>
+        <div class="tcard-author">
+          <div class="author-avatar">AD</div>
+          <div>
+            <div class="author-name">Anita Desai</div>
+            <div class="author-role">Senior Design Engineer, Silicore Semiconductors</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <div class="tcard-quote">For a one-person consultancy, the depth of experience is impressive. Our team appreciated the direct communication and the absence of corporate overhead. Just solid verification work.</div>
+        <div class="tcard-author">
+          <div class="author-avatar">MJ</div>
+          <div>
+            <div class="author-name">Mark Johnson</div>
+            <div class="author-role">Product Manager, VLSI Systems Inc.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ───────────────────────────────────────────────── -->
+<section id="faq">
+  <div class="container">
+    <div class="section-header center" style="margin-bottom:40px;">
+      <div class="kicker">FAQ</div>
+      <h2>Still wondering if design verification<br>is worth the investment?</h2>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <button class="faq-q">
+          What does a design verification consultant actually do?
+          <span class="faq-icon"><svg viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11"></line><line x1="1" y1="6" x2="11" y2="6"></line></svg></span>
+        </button>
+        <div class="faq-a">We build testbenches, run simulations, and check coverage before tapeout. The goal is catching functional bugs early so you don't spin silicon twice.</div>
+      </div>
+
+      <div class="faq-item" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <button class="faq-q">
+          How is this different from what our internal team already does?
+          <span class="faq-icon"><svg viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11"></line><line x1="1" y1="6" x2="11" y2="6"></line></svg></span>
+        </button>
+        <div class="faq-a">We bring a fresh pair of eyes and deep experience across multiple projects. Internal teams can get blind spots from familiarity. We spot the edge cases they've stopped seeing.</div>
+      </div>
+
+      <div class="faq-item" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <button class="faq-q">
+          Do you work on-site or remotely?
+          <span class="faq-icon"><svg viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11"></line><line x1="1" y1="6" x2="11" y2="6"></line></svg></span>
+        </button>
+        <div class="faq-a">Either works. We can embed on-site, work entirely remote, or do a hybrid setup. What matters is hitting your verification schedule, not where the desk is.</div>
+      </div>
+
+      <div class="faq-item" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <button class="faq-q">
+          We're working with a tight deadline. Can you ramp up quickly?
+          <span class="faq-icon"><svg viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11"></line><line x1="1" y1="6" x2="11" y2="6"></line></svg></span>
+        </button>
+        <div class="faq-a">Yes. We can start within days, not weeks. No lengthy onboarding process — just the tools and environment access needed to begin verifying immediately.</div>
+      </div>
+
+      <div class="faq-item" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <button class="faq-q">
+          What does a typical engagement look like?
+          <span class="faq-icon"><svg viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11"></line><line x1="1" y1="6" x2="11" y2="6"></line></svg></span>
+        </button>
+        <div class="faq-a">We start with a scoping call to understand your project and verification gaps. Then we define the deliverables, timeline, and sign-off criteria. Payment is milestone-based.</div>
+      </div>
+
+      <div class="faq-item" style="opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s;">
+        <button class="faq-q">
+          Is design verification useful for small ASIC projects too?
+          <span class="faq-icon"><svg viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11"></line><line x1="1" y1="6" x2="11" y2="6"></line></svg></span>
+        </button>
+        <div class="faq-a">Especially for smaller projects, one missed bug can wipe out your margin. A targeted verification scope costs a fraction of a respin and keeps first-pass success likely.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ───────────────────────────────────────────── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+
+      <div class="contact-info">
+        <div class="kicker">Get in Touch</div>
+        <h2>Start a verification project</h2>
+        <p>Describe your verification scope and we'll respond with a technical assessment and a timeline.</p>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <a href="mailto:sunil.sharma.vlsi@gmail.com">sunil.sharma.vlsi@gmail.com</a>
+        </div>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 .01h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"></path></svg>
+          <a href="tel:+919881190961">+91 98811 90961</a>
+        </div>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Rajasthan, India · Remote worldwide</span>
+        </div>
+      </div>
+
+      <div>
+        <form class="contact-form" id="contactForm" novalidate="">
+          <div class="form-row">
+            <div class="field">
+              <label for="name">Name *</label>
+              <input type="text" id="name" name="name" placeholder="Your name" required="">
+            </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" placeholder="you@company.com" required="">
+            </div>
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 555 000 0000">
+          </div>
+          <div class="field">
+            <label for="domain">Verification domain</label>
+            <select id="domain" name="domain">
+              <option value="">Select one…</option>
+              <option>UVM / SystemVerilog</option>
+              <option>Formal verification</option>
+              <option>Mixed-signal verification</option>
+              <option>Coverage closure</option>
+              <option>Gate-level simulation</option>
+              <option>Other (specify in message)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Describe your project, block size, timeline, tools…"></textarea>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary">Send Inquiry →</button>
+          </div>
+          <p class="form-note">We typically respond within one business day with a technical assessment.</p>
+        </form>
+        <div class="form-success" id="formSuccess">
+          ✓ Message received! We'll review your details and respond within one business day.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-brand-name">Verifcore Consultants</div>
+        <p>Expert semiconductor design verification services. One consultant, two decades of experience, results you can measure in first-pass silicon success.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="file:///C:/Users/sunil/Downloads/index.html#services">Services</a></li>
+          <li><a href="file:///C:/Users/sunil/Downloads/index.html#approach">Our Approach</a></li>
+          <li><a href="file:///C:/Users/sunil/Downloads/index.html#testimonials">Client Results</a></li>
+          <li><a href="file:///C:/Users/sunil/Downloads/index.html#faq">FAQ</a></li>
+          <li><a href="file:///C:/Users/sunil/Downloads/index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:sunil.sharma.vlsi@gmail.com">sunil.sharma.vlsi@gmail.com</a></li>
+          <li><a href="tel:+919881190961">+91 98811 90961</a></li>
+          <li><a href="https://www.linkedin.com/company/verifcore-consultants" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li>Rajasthan, India</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Verifcore Consultants. All rights reserved.</span>
+      <span>Semiconductor Design Verification · India · Remote Worldwide</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── JAVASCRIPT ─────────────────────────────────────────── -->
+<script>
+  // Mobile nav
+  const menuBtn    = document.getElementById('menuBtn');
+  const mobileNav  = document.getElementById('mobile-nav');
+  const mnBackdrop = document.getElementById('mnBackdrop');
+  const mnClose    = document.getElementById('mnClose');
+  const mnLinks    = document.querySelectorAll('.mn-links a, .mn-cta');
+
+  function openMenu()  { mobileNav.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeMenu() { mobileNav.classList.remove('open'); document.body.style.overflow = ''; }
+
+  menuBtn.addEventListener('click', openMenu);
+  mnBackdrop.addEventListener('click', closeMenu);
+  mnClose.addEventListener('click', closeMenu);
+  mnLinks.forEach(l => l.addEventListener('click', closeMenu));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Contact form — mailto fallback (works without a backend)
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name    = document.getElementById('name').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const domain  = document.getElementById('domain').value;
+    const message = document.getElementById('message').value.trim();
+
+    if (!name || !email) {
+      alert('Please fill in your name and email.');
+      return;
+    }
+
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nDomain: ${domain}\n\nMessage:\n${message}`
+    );
+    window.location.href = `mailto:sunil.sharma.vlsi@gmail.com?subject=Verification Project Inquiry from ${encodeURIComponent(name)}&body=${body}`;
+
+    this.style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  });
+
+  // Scroll-reveal (lightweight)
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.service-card, .tcard, .faq-item, .approach-panel').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+</script>
+
+
+</body></html>
