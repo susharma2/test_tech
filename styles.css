@@ -227,7 +227,25 @@ p { color: var(--muted); }
   gap: 32px;
   list-style: none;
 }
+.site-logo {
+    height: 48px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 10px;
+}
 
+.site-logo-footer {
+    height: 40px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.nav-logo,
+.footer-brand-name {
+    display: flex;
+    align-items: center;
+}
 .nav-links a {
   font-size: 0.88rem;
   font-weight: 500;
