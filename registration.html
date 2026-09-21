@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifcore - User Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            padding: 50px;
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #999;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 0.95em;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        input:invalid {
+            border-color: #ff6b6b;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: none;
+            text-align: center;
+        }
+        
+        .info-message {
+            background: #e2e3e5;
+            color: #383d41;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .global-note {
+            text-align: center;
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verifcore Registration</h1>
+        <p class="subtitle">Join our global community</p>
+        
+        <div class="success-message" id="successMessage">
+            ✓ Registration successful! Check your email for confirmation.
+        </div>
+        
+        <div class="info-message">
+            📱 This registration form accepts users from <strong>all over the world</strong>. Use your local phone format.
+        </div>
+        
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="your.email@example.com" 
+                    required
+                    autocomplete="email"
+                >
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    placeholder="+1 (555) 000-0000 or your local format" 
+                    required
+                    autocomplete="tel"
+                >
+                <div class="error-message" id="phoneError"></div>
+                <small style="color: #999; margin-top: 5px; display: block;">
+                    Include country code (e.g., +1, +44, +91) or use your local format
+                </small>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Register
+            </button>
+        </form>
+        
+        <div class="global-note">
+            Your data is secure and will only be used for service updates.
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        
+        // Basic email validation
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+        
+        // Basic phone validation (very permissive to allow global formats)
+        function validatePhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            return cleaned.length >= 7; // Minimum 7 digits
+        }
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset error messages
+            document.getElementById('emailError').style.display = 'none';
+            document.getElementById('phoneError').style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            let isValid = true;
+            const email = emailInput.value.trim();
+            const phone = phoneInput.value.trim();
+            
+            // Validate email
+            if (!validateEmail(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate phone
+            if (!validatePhone(phone)) {
+                document.getElementById('phoneError').textContent = 'Please enter a valid phone number (at least 7 digits)';
+                document.getElementById('phoneError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span>Registering...';
+            
+            try {
+                // Send data to server
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        phone: phone,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                if (response.ok) {
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    
+                    // Keep button disabled for 3 seconds
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }, 3000);
+                } else {
+                    throw new Error('Registration failed');
+                }
+            } catch (error) {
+                alert('An error occurred during registration. Please try again.\nNote: This demo requires a backend server. See server.js for setup instructions.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+        
+        // Disable submit button while form is empty
+        function checkFormValidity() {
+            submitBtn.disabled = !form.checkValidity();
+        }
+        
+        emailInput.addEventListener('input', checkFormValidity);
+        phoneInput.addEventListener('input', checkFormValidity);
+        
+        // Initial check
+        checkFormValidity();
+    </script>
+</body>
+</html>

@@ -1,13 +1,137 @@
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Downloads</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifcore - Downloads</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 50px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        .description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-size: 1.05em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            font-size: 1.05em;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            flex: 1;
+            min-width: 200px;
+            border: 2px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8e8e8;
+            border-color: #999;
+        }
+        
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 5px;
+            color: #333;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Downloads Page</h1>
-<h2>Verifcore's technical PDFs stand apart because they're written by a working DV Engineer rather than a generic course instructor, with an interview- and job-ready focus that blends practical "pro tips" with real project context like APB, UART, and ALU implementations. The three guides — Verilog, SystemVerilog, and UVM — are designed as a connected, progressive learning path rather than standalone unrelated documents, delivered in a concise, high-signal format you can revisit anytime before interviews or on the job, without sitting through a 40-hour video course. They come with lifetime access on a one-time payment (no subscriptions), free updates as content is revised, and clear, globally accessible English that works well for non-native speakers — a common weak point in many technical PDFs in this space.</h2>
-
-    <p>Your files will be available here.</p>
+    <div class="container">
+        <h1>Welcome to Verifcore Downloads</h1>
+        
+        <p class="description">
+            Verifcore's technical PDFs stand apart because they're written by a working DV Engineer rather than a generic course instructor, with an interview- and job-ready focus that blends practical "pro tips" with real project context like APB, UART, and ALU implementations. The three guides — Verilog, SystemVerilog, and UVM — are designed as a connected, progressive learning path rather than standalone unrelated documents, delivered in a concise, high-signal format you can revisit anytime before interviews or on the job, without sitting through a 40-hour video course. They come with lifetime access on a one-time payment (no subscriptions), free updates as content is revised, and clear, globally accessible English that works well for non-native speakers — a common weak point in many technical PDFs in this space.
+        </p>
+        
+        <div class="button-group">
+            <a href="registration.html" target="_blank" class="btn btn-register">
+                📝 Register Now
+            </a>
+            <button class="btn btn-secondary" onclick="alert('Technical guides download functionality coming soon!')">
+                📚 Download Guides
+            </button>
+        </div>
+        
+        <div class="info-box">
+            <h3>✓ Registration Benefits</h3>
+            <ul>
+                <li>Access to exclusive technical content and updates</li>
+                <li>Lifetime access to all learning materials</li>
+                <li>One-time payment, no subscriptions</li>
+                <li>Free updates as content is revised</li>
+                <li>Global community support</li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
