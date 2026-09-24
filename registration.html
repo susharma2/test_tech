@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifcore - User Registration</title>
+    <!-- reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/;
+        frame-src https://www.google.com/recaptcha/;
+        connect-src 'self' https://www.google.com/recaptcha/;
+        style-src 'self' 'unsafe-inline';
+    ">
     <style>
         * {
             margin: 0;
@@ -76,11 +86,47 @@
             border-color: #ff6b6b;
         }
         
+        input.success {
+            border-color: #28a745;
+            background-color: #f0f8f5;
+        }
+        
         .error-message {
             color: #ff6b6b;
             font-size: 0.85em;
             margin-top: 5px;
             display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: none;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .info-message {
+            background: #e2e3e5;
+            color: #383d41;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            border: 1px solid #ffeaa7;
         }
         
         .submit-btn {
@@ -96,38 +142,18 @@
             transition: all 0.3s ease;
         }
         
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
         
-        .submit-btn:active {
+        .submit-btn:active:not(:disabled) {
             transform: translateY(0);
         }
         
         .submit-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
-        }
-        
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            display: none;
-            text-align: center;
-        }
-        
-        .info-message {
-            background: #e2e3e5;
-            color: #383d41;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            font-size: 0.9em;
-            line-height: 1.6;
         }
         
         .spinner {
@@ -146,11 +172,54 @@
             100% { transform: rotate(360deg); }
         }
         
+        .recaptcha-notice {
+            font-size: 0.75em;
+            color: #999;
+            margin-top: 15px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .verification-status {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .verification-status.pending {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #90caf9;
+            display: flex;
+        }
+        
+        .verification-status.verified {
+            background: #e8f5e9;
+            color: #388e3c;
+            border: 1px solid #81c784;
+            display: flex;
+        }
+        
+        .verification-status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            display: flex;
+        }
+        
         .global-note {
             text-align: center;
             color: #999;
             font-size: 0.85em;
             margin-top: 20px;
+        }
+        
+        .required {
+            color: #ff6b6b;
         }
     </style>
 </head>
@@ -160,16 +229,25 @@
         <p class="subtitle">Join our global community</p>
         
         <div class="success-message" id="successMessage">
-            ✓ Registration successful! Check your email for confirmation.
+            ✓ Registration successful! Please check your email for verification.
+        </div>
+        
+        <div class="warning-message" id="warningMessage" style="display: none;">
+            ⚠️ <span id="warningText"></span>
         </div>
         
         <div class="info-message">
             📱 This registration form accepts users from <strong>all over the world</strong>. Use your local phone format.
         </div>
         
-        <form id="registrationForm">
+        <div class="verification-status" id="verificationStatus">
+            <span id="verificationIcon">🔄</span>
+            <span id="verificationText">Verifying...</span>
+        </div>
+        
+        <form id="registrationForm" novalidate>
             <div class="form-group">
-                <label for="email">Email Address *</label>
+                <label for="email">Email Address <span class="required">*</span></label>
                 <input 
                     type="email" 
                     id="email" 
@@ -177,12 +255,13 @@
                     placeholder="your.email@example.com" 
                     required
                     autocomplete="email"
+                    aria-describedby="emailError"
                 >
                 <div class="error-message" id="emailError"></div>
             </div>
             
             <div class="form-group">
-                <label for="phone">Phone Number *</label>
+                <label for="phone">Phone Number <span class="required">*</span></label>
                 <input 
                     type="tel" 
                     id="phone" 
@@ -190,6 +269,7 @@
                     placeholder="+1 (555) 000-0000 or your local format" 
                     required
                     autocomplete="tel"
+                    aria-describedby="phoneError"
                 >
                 <div class="error-message" id="phoneError"></div>
                 <small style="color: #999; margin-top: 5px; display: block;">
@@ -197,9 +277,15 @@
                 </small>
             </div>
             
-            <button type="submit" class="submit-btn" id="submitBtn">
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
                 Register
             </button>
+            
+            <div class="recaptcha-notice">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+            </div>
         </form>
         
         <div class="global-note">
@@ -211,28 +297,78 @@
         const form = document.getElementById('registrationForm');
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
+        const warningMessage = document.getElementById('warningMessage');
         const emailInput = document.getElementById('email');
         const phoneInput = document.getElementById('phone');
+        const verificationStatus = document.getElementById('verificationStatus');
         
-        // Basic email validation
+        // reCAPTCHA callback
+        window.onRecaptchaSuccess = function(token) {
+            console.log('reCAPTCHA verified');
+            submitBtn.disabled = false;
+        };
+        
+        window.onRecaptchaError = function() {
+            console.error('reCAPTCHA failed');
+            showWarning('reCAPTCHA verification failed. Please refresh the page.');
+            submitBtn.disabled = true;
+        };
+        
+        // reCAPTCHA timeout
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                showWarning('Security verification timeout. Please refresh the page.');
+            }
+        }, 30000);
+        
+        // Email validation
         function validateEmail(email) {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return regex.test(email);
         }
         
-        // Basic phone validation (very permissive to allow global formats)
+        // Phone validation
         function validatePhone(phone) {
             const cleaned = phone.replace(/\D/g, '');
-            return cleaned.length >= 7; // Minimum 7 digits
+            return cleaned.length >= 7 && cleaned.length <= 15;
         }
         
+        // Show error message
+        function showError(fieldId, message) {
+            const errorEl = document.getElementById(fieldId + 'Error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            document.getElementById(fieldId).classList.remove('success');
+            document.getElementById(fieldId).classList.add('error');
+        }
+        
+        // Clear error message
+        function clearError(fieldId) {
+            const errorEl = document.getElementById(fieldId + 'Error');
+            errorEl.style.display = 'none';
+            document.getElementById(fieldId).classList.remove('error');
+        }
+        
+        // Show warning
+        function showWarning(message) {
+            document.getElementById('warningText').textContent = message;
+            warningMessage.style.display = 'block';
+        }
+        
+        // Hide warning
+        function hideWarning() {
+            warningMessage.style.display = 'none';
+        }
+        
+        // Form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Reset error messages
+            // Reset messages
             document.getElementById('emailError').style.display = 'none';
             document.getElementById('phoneError').style.display = 'none';
             successMessage.style.display = 'none';
+            hideWarning();
             
             let isValid = true;
             const email = emailInput.value.trim();
@@ -240,27 +376,41 @@
             
             // Validate email
             if (!validateEmail(email)) {
-                document.getElementById('emailError').textContent = 'Please enter a valid email address';
-                document.getElementById('emailError').style.display = 'block';
+                showError('email', 'Please enter a valid email address');
                 isValid = false;
+            } else {
+                clearError('email');
+                emailInput.classList.add('success');
             }
             
             // Validate phone
             if (!validatePhone(phone)) {
-                document.getElementById('phoneError').textContent = 'Please enter a valid phone number (at least 7 digits)';
-                document.getElementById('phoneError').style.display = 'block';
+                showError('phone', 'Please enter a valid phone number (7-15 digits)');
                 isValid = false;
+            } else {
+                clearError('phone');
+                phoneInput.classList.add('success');
             }
             
             if (!isValid) return;
             
-            // Disable button and show loading state
+            // Get reCAPTCHA token
+            let recaptchaToken = null;
+            try {
+                recaptchaToken = await grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', { action: 'submit' });
+            } catch (error) {
+                console.error('reCAPTCHA execution failed:', error);
+                showWarning('Security verification failed. Please refresh the page.');
+                return;
+            }
+            
+            // Disable button and show loading
             submitBtn.disabled = true;
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="spinner"></span>Registering...';
             
             try {
-                // Send data to server
+                // Send registration request
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: {
@@ -269,39 +419,76 @@
                     body: JSON.stringify({
                         email: email,
                         phone: phone,
+                        recaptchaToken: recaptchaToken,
                         timestamp: new Date().toISOString()
                     })
                 });
                 
+                const data = await response.json();
+                
                 if (response.ok) {
                     successMessage.style.display = 'block';
                     form.reset();
+                    emailInput.classList.remove('success');
+                    phoneInput.classList.remove('success');
                     
-                    // Keep button disabled for 3 seconds
+                    // Re-enable button after 5 seconds
                     setTimeout(() => {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalText;
-                    }, 3000);
+                    }, 5000);
                 } else {
-                    throw new Error('Registration failed');
+                    showWarning(data.error || 'Registration failed. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                 }
             } catch (error) {
-                alert('An error occurred during registration. Please try again.\nNote: This demo requires a backend server. See server.js for setup instructions.');
+                console.error('Registration error:', error);
+                showWarning('Connection error. Please check your internet and try again.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             }
         });
         
-        // Disable submit button while form is empty
+        // Real-time validation
+        emailInput.addEventListener('blur', () => {
+            if (emailInput.value && !validateEmail(emailInput.value)) {
+                showError('email', 'Invalid email format');
+            } else {
+                clearError('email');
+                if (emailInput.value) emailInput.classList.add('success');
+            }
+        });
+        
+        phoneInput.addEventListener('blur', () => {
+            if (phoneInput.value && !validatePhone(phoneInput.value)) {
+                showError('phone', 'Invalid phone format (7-15 digits)');
+            } else {
+                clearError('phone');
+                if (phoneInput.value) phoneInput.classList.add('success');
+            }
+        });
+        
+        // Check form validity for submit button
         function checkFormValidity() {
-            submitBtn.disabled = !form.checkValidity();
+            const isValid = validateEmail(emailInput.value) && validatePhone(phoneInput.value);
+            submitBtn.disabled = !isValid;
         }
         
         emailInput.addEventListener('input', checkFormValidity);
         phoneInput.addEventListener('input', checkFormValidity);
         
-        // Initial check
-        checkFormValidity();
+        // On page load
+        window.addEventListener('load', () => {
+            checkFormValidity();
+        });
+        
+        // Warn if reCAPTCHA didn't load (after 30 seconds)
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                showWarning('Security verification is taking longer than expected. Please refresh the page.');
+            }
+        }, 30000);
     </script>
 </body>
 </html>
