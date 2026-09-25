@@ -33,9 +33,10 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-const cryptoRandomString = require('crypto-random-string');
+//const cryptoRandomString = require('crypto-random-string');
 const sanitizeHtml = require('sanitize-html');
 const validators = require('validator');
 
@@ -473,7 +474,8 @@ app.post('/api/register', registrationLimiter, async (req, res) => {
 
         // Generate verification token if email verification is enabled
         if (EMAIL_VERIFICATION) {
-            verificationToken = cryptoRandomString({ length: 32, type: 'hex' });
+		verificationToken = crypto.randomBytes(16).toString('hex');
+           // verificationToken = cryptoRandomString({ length: 32, type: 'hex' });
             verificationSentAt = new Date().toISOString();
         }
 
