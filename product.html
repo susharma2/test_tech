@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verification PDFs | VeriCore</title>
+<style>
+  :root{--bg:#f6f8fa;--card:#fff;--text:#14202b;--muted:#5b6b7a;--line:#d5dde5;--accent:#0b6e4f;--accent-text:#fff;--hl:#e3f4ec}
+  @media (prefers-color-scheme:dark){:root{--bg:#0f161d;--card:#17212b;--text:#e8eef3;--muted:#9fb0bf;--line:#2a3846;--accent:#3ecf8e;--accent-text:#06231a;--hl:#16352b}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px 16px;background:var(--bg);color:var(--text);font:16px/1.5 Georgia,"Times New Roman",serif}
+  .wrap{max-width:860px;margin:0 auto}
+  h1{font-size:1.6rem;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 20px}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column}
+  .card h2{font-size:1.05rem;margin:0 0 4px}
+  .card p{margin:0 0 12px;color:var(--muted);font-size:.92rem;flex:1}
+  .price{font:700 1.5rem system-ui,sans-serif;margin-bottom:10px}
+  .btn{display:block;text-align:center;text-decoration:none;font:600 .95rem system-ui,sans-serif;padding:10px;border-radius:6px;background:var(--accent);color:var(--accent-text)}
+  .btn:hover{filter:brightness(1.1)}
+  .btn:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+  .bundle{margin-top:14px;background:var(--hl);border:2px solid var(--accent);border-radius:8px;padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .bundle h2{margin:0;font-size:1.1rem}
+  .bundle p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+  .bundle .price{margin:0}
+  .bundle s{color:var(--muted);font-size:1rem;font-weight:400}
+  .bundle .btn{min-width:160px}
+  .note{margin-top:14px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Verification PDF guides</h1>
+  <p class="sub">Instant PDF download after Signup/purchase.</p>
+
+  <section class="grid">
+    <article class="card">
+      <h2>Verilog HDL</h2>
+      <p>Language basics, RTL design and testbenches.</p>
+      <div class="price">$19</div>
+      <a class="btn" href="PASTE_VERILOG_PAYMENT_LINK" aria-label="Buy Verilog HDL PDF for $29">Buy Verilog PDF</a>
+    </article>
+    <article class="card">
+      <h2>SystemVerilog</h2>
+      <p>Classes, randomization, assertions and coverage.</p>
+      <div class="price">$20</div>
+      <a class="btn" href="PASTE_SYSTEMVERILOG_PAYMENT_LINK" aria-label="Buy SystemVerilog PDF for $30">Buy SystemVerilog PDF</a>
+    </article>
+    <article class="card">
+      <h2>UVM</h2>
+      <p>Building UVM testbenches, sequences and scoreboards.</p>
+      <div class="price">$21</div>
+      <a class="btn" href="PASTE_UVM_PAYMENT_LINK" aria-label="Buy UVM PDF for $31">Buy UVM PDF</a>
+    </article>
+  </section>
+
+  <section class="bundle">
+    <div>
+      <h2>All three PDFs</h2>
+      <p>Verilog HDL + SystemVerilog + UVM. Save $10.</p>
+    </div>
+    <div class="price"><s>$60</s> $50</div>
+    <a class="btn" href="PASTE_BUNDLE_PAYMENT_LINK" aria-label="Buy all three PDFs for $60">Buy bundle</a>
+  </section>
+
+  <p class="note">Prices in USD. Secure checkout is handled by the payment provider.</p>
+</main>
+</body>
+</html>
