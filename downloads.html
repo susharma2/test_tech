@@ -10,47 +10,48 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 40px 20px;
+            font-size: 15px;
         }
-        
+
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            padding: 50px;
+            padding: 40px;
         }
-        
+
         h1 {
             color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            margin-bottom: 16px;
+            font-size: 1.9em;
         }
-        
+
         .description {
             color: #666;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            font-size: 1.05em;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-size: 0.95em;
         }
-        
+
         .button-group {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin-top: 40px;
+            margin-top: 30px;
         }
-        
+
         .btn {
             display: inline-block;
-            padding: 14px 32px;
-            font-size: 1.05em;
+            padding: 12px 28px;
+            font-size: 0.95em;
             font-weight: 600;
             text-decoration: none;
             border-radius: 8px;
@@ -59,19 +60,19 @@
             cursor: pointer;
             text-align: center;
         }
-        
+
         .btn-register {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             flex: 1;
             min-width: 200px;
         }
-        
+
         .btn-register:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
-        
+
         .btn-secondary {
             background: #f5f5f5;
             color: #333;
@@ -79,57 +80,188 @@
             min-width: 200px;
             border: 2px solid #ddd;
         }
-        
+
         .btn-secondary:hover {
             background: #e8e8e8;
             border-color: #999;
         }
-        
-        .info-box {
+
+        /* ---------- Products section ---------- */
+        .products {
+            margin-top: 36px;
+            padding-top: 28px;
+            border-top: 1px solid #e3e6ef;
+            font-size: 0.88em;
+        }
+
+        .products h2 {
+            color: #333;
+            font-size: 1.25em;
+            margin-bottom: 2px;
+        }
+
+        .products .sub {
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .products .grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        }
+
+        .products .card {
+            background: #fff;
+            border: 1px solid #dde1ee;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .products .card h3 {
+            font-size: 1em;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .products .card p {
+            color: #666;
+            font-size: 0.92em;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .products .price {
+            font-weight: 700;
+            font-size: 1.35em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .products .buy {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            padding: 9px;
+            border-radius: 6px;
+            background: #667eea;
+            color: #fff;
+            transition: background 0.2s ease;
+        }
+
+        .products .buy:hover {
+            background: #764ba2;
+        }
+
+        .products .buy:focus-visible {
+            outline: 3px solid #333;
+            outline-offset: 2px;
+        }
+
+        .products .bundle {
+            margin-top: 12px;
             background: #f0f4ff;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin-top: 40px;
-            border-radius: 5px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .products .bundle h3 {
+            font-size: 1.05em;
             color: #333;
         }
-        
-        .info-box h3 {
-            color: #667eea;
-            margin-bottom: 10px;
+
+        .products .bundle p {
+            color: #666;
+            margin-top: 2px;
         }
-        
-        .info-box ul {
-            margin-left: 20px;
-            line-height: 1.8;
+
+        .products .bundle .price {
+            margin: 0;
+        }
+
+        .products .bundle s {
+            color: #888;
+            font-size: 0.75em;
+            font-weight: 400;
+        }
+
+        .products .bundle .buy {
+            min-width: 150px;
+        }
+
+        .products .note {
+            margin-top: 12px;
+            color: #777;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome to Verifcore Downloads</h1>
-        
+
         <p class="description">
-            Verifcore's technical PDFs stand apart because they're written by a working DV Engineer 
-            rather than a generic course instructor, with an interview- and job-ready focus that blends 
-            practical "pro tips" with real project context like implementations. 
-            The three guides — Verilog, SystemVerilog, and UVM — are designed as a connected, 
-            progressive learning path rather than standalone unrelated documents, delivered in a 
-            concise, high-signal format you can revisit anytime before interviews or on the job, 
-            without sitting through a 40-hour video course. They come with lifetime access on a 
-            one-time payment (no subscriptions), free updates as content is revised, and clear, 
-            globally accessible English that works well for non-native speakers — a common weak 
+            Verifcore's technical PDFs stand apart because they're written by a working DV Engineer
+            rather than a generic course instructor, with an interview- and job-ready focus that blends
+            practical "pro tips" with real project context like implementations.
+            The three guides — Verilog, SystemVerilog, and UVM — are designed as a connected,
+            progressive learning path rather than standalone unrelated documents, delivered in a
+            concise, high-signal format you can revisit anytime before interviews or on the job,
+            without sitting through a 40-hour video course. They come with lifetime access on a
+            one-time payment (no subscriptions), free updates as content is revised, and clear,
+            globally accessible English that works well for non-native speakers — a common weak
             point in many technical PDFs in this space.
         </p>
-        
+
         <div class="button-group">
             <a href="registration.html" target="_blank" class="btn btn-register">
-                📝 Register Now
+                📝 Sign Up/Sign In
             </a>
-            <button class="btn btn-secondary" onclick="alert('Technical guides download functionality coming soon!')">
-                📚 Download Guides
-            </button>
         </div>
-      </div>
+
+        <section class="products">
+            <div class="grid">
+                <article class="card">
+                    <h3>Verilog HDL</h3>
+                    <p>Language basics, RTL design and testbenches.</p>
+                    <div class="price">$19</div>
+                    <a class="buy" href="PASTE_VERILOG_PAYMENT_LINK" aria-label="Buy Verilog HDL PDF for $19">Buy Verilog PDF</a>
+                </article>
+                <article class="card">
+                    <h3>SystemVerilog</h3>
+                    <p>Classes, randomization, assertions and coverage.</p>
+                    <div class="price">$20</div>
+                    <a class="buy" href="PASTE_SYSTEMVERILOG_PAYMENT_LINK" aria-label="Buy SystemVerilog PDF for $20">Buy SystemVerilog PDF</a>
+                </article>
+                <article class="card">
+                    <h3>UVM</h3>
+                    <p>Building UVM testbenches, sequences and scoreboards.</p>
+                    <div class="price">$21</div>
+                    <a class="buy" href="PASTE_UVM_PAYMENT_LINK" aria-label="Buy UVM PDF for $21">Buy UVM PDF</a>
+                </article>
+            </div>
+
+            <div class="bundle">
+                <div>
+                    <h3>All three PDFs</h3>
+                    <p>Verilog HDL + SystemVerilog + UVM. Save $10.</p>
+                </div>
+                <div class="price"><s>$60</s> $50</div>
+                <a class="buy" href="PASTE_BUNDLE_PAYMENT_LINK" aria-label="Buy all three PDFs for $50">Buy bundle</a>
+            </div>
+
+            <p class="note">Prices in USD. Secure checkout is handled by the payment provider.</p>
+        </section>
+    </div>
 </body>
 </html>
