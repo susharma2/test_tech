@@ -3,7 +3,7 @@
 <head>
     <script>
         /* Mark the page when it is shown inside the pop-up iframe (set early to avoid a flash of the full-page layout) */
-        if (window.self !== window.top) document.documentElement.classList.add('embedded');
+        if (window.self !== window.top && /[?&]popup=1(&|$)/.test(location.search)) document.documentElement.classList.add('embedded');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -272,7 +272,7 @@
         var CURRENT_PAGE = 'signin.html';
         var OTHER_PAGE   = 'registration.html';
         var link = document.querySelector('.register-line a');
-        var embedded = window.self !== window.top;
+        var embedded = window.self !== window.top && /[?&]popup=1(&|$)/.test(location.search);
 
         if (embedded) {
             if (link) link.addEventListener('click', function (e) {
@@ -297,7 +297,7 @@
         function openModal(page) {
             lastFocus = document.activeElement;
             frame.style.height = '560px';
-            frame.src = page;
+            frame.src = page + (page.indexOf('?') < 0 ? '?popup=1' : '&popup=1');
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
@@ -543,7 +543,7 @@
                 $('successMessage').textContent = '✓ Signed in successfully. Redirecting...';
                 $('successMessage').style.display = 'block';
                 setTimeout(() => {
-                    if (window.self !== window.top) window.parent.postMessage({ type: 'verifcore-redirect', url: CONFIG.REDIRECT_AFTER_SIGNIN }, '*');
+                    if (document.documentElement.classList.contains('embedded')) window.parent.postMessage({ type: 'verifcore-redirect', url: CONFIG.REDIRECT_AFTER_SIGNIN }, '*');
                     else window.location.href = CONFIG.REDIRECT_AFTER_SIGNIN;
                 }, 800);
             }
