@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        /* Mark the page when it is shown inside the pop-up iframe (set early to avoid a flash of the full-page layout) */
+        if (window.self !== window.top) document.documentElement.classList.add('embedded');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifcore - User Registration</title>
@@ -12,7 +16,7 @@
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/;
-        frame-src https://www.google.com/recaptcha/;
+        frame-src 'self' https://www.google.com/recaptcha/;
         connect-src 'self' https://www.google.com/recaptcha/;
         style-src 'self' 'unsafe-inline';
     ">
@@ -209,6 +213,33 @@
         .recaptcha-notice { font-size: 0.72em; color: #999; margin-top: 14px; text-align: center; line-height: 1.5; }
         .global-note { text-align: center; color: #999; font-size: 0.8em; margin-top: 16px; }
         .required { color: #ff6b6b; }
+
+        /* ===== Pop-up (modal) support ===== */
+        .vc-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(20, 16, 40, 0.6);
+            display: none; align-items: center; justify-content: center;
+            padding: 16px; overflow-y: auto;
+        }
+        .vc-overlay.open { display: flex; }
+        .vc-dialog {
+            position: relative; width: 100%; max-width: 480px;
+            background: #fff; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+        .vc-frame { display: block; width: 100%; height: 560px; border: 0; background: #fff; }
+        .vc-close {
+            position: absolute; top: 8px; right: 10px; z-index: 2;
+            width: 32px; height: 32px; border: none; border-radius: 50%;
+            background: #f1f1f5; color: #555; font-size: 22px; line-height: 1; cursor: pointer;
+        }
+        .vc-close:hover, .vc-close:focus-visible { background: #e2e2ea; color: #222; }
+
+        /* When this page is the content of a pop-up: drop the page chrome */
+        html.embedded body { background: transparent; min-height: 0; padding: 0; display: block; }
+        html.embedded .container { box-shadow: none; border-radius: 0; max-width: none; }
+        html.embedded .vc-overlay { display: none !important; }
+        html.embedded .grecaptcha-badge { visibility: hidden; } /* parent page already shows one; notice text stays in the form */
     </style>
 </head>
 <body>
@@ -330,6 +361,88 @@
         <div class="global-note">Your data is secure and will only be used for service updates.</div>
     </div>
 
+
+    <!-- Pop-up that hosts the other page -->
+    <div class="vc-overlay" id="vcOverlay" aria-hidden="true">
+        <div class="vc-dialog" role="dialog" aria-modal="true" aria-label="Sign in">
+            <button type="button" class="vc-close" id="vcClose" aria-label="Close">&times;</button>
+            <iframe class="vc-frame" id="vcFrame" title="Sign in"></iframe>
+        </div>
+    </div>
+
+    <script>
+    /* =====================================================================
+       POP-UP LINKING between registration.html and signin.html
+       - Top-level page: clicking the link opens the other page in a pop-up.
+       - Inside the pop-up: clicking the link asks the parent to switch
+         (or to just close the pop-up if the parent already is that page).
+       ===================================================================== */
+    (function () {
+        var CURRENT_PAGE = 'registration.html';
+        var OTHER_PAGE   = 'signin.html';
+        var link = document.querySelector('.signin-line a');
+        var embedded = window.self !== window.top;
+
+        if (embedded) {
+            if (link) link.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.parent.postMessage({ type: 'verifcore-switch', page: OTHER_PAGE }, '*');
+            });
+            var card = document.querySelector('.container');
+            function postSize() {
+                window.parent.postMessage({ type: 'verifcore-resize', height: Math.ceil(card.getBoundingClientRect().height) }, '*');
+            }
+            if (window.ResizeObserver) new ResizeObserver(postSize).observe(card);
+            window.addEventListener('load', postSize);
+            postSize();
+            return;
+        }
+
+        var overlay = document.getElementById('vcOverlay');
+        var frame   = document.getElementById('vcFrame');
+        var closeBtn = document.getElementById('vcClose');
+        var lastFocus = null;
+
+        function openModal(page) {
+            lastFocus = document.activeElement;
+            frame.style.height = '560px';
+            frame.src = page;
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            closeBtn.focus();
+        }
+        function closeModal() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            frame.src = 'about:blank';          // resets the form inside the pop-up
+            document.body.style.overflow = '';
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+
+        if (link) link.addEventListener('click', function (e) {
+            e.preventDefault();
+            openModal(OTHER_PAGE);
+        });
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+        });
+
+        window.addEventListener('message', function (e) {
+            if (e.source !== frame.contentWindow || !e.data) return;
+            if (e.data.type === 'verifcore-resize') {
+                frame.style.height = Math.min(e.data.height, Math.floor(window.innerHeight * 0.92)) + 'px';
+            } else if (e.data.type === 'verifcore-switch') {
+                if (e.data.page === CURRENT_PAGE) closeModal();   // the page behind the pop-up is already the target
+                else openModal(e.data.page);
+            } else if (e.data.type === 'verifcore-redirect') {
+                window.location.href = e.data.url;
+            }
+        });
+    })();
+    </script>
     <script>
     /* =====================================================================
        CONFIGURATION

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        /* Mark the page when it is shown inside the pop-up iframe (set early to avoid a flash of the full-page layout) */
+        if (window.self !== window.top) document.documentElement.classList.add('embedded');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifcore - Sign In</title>
+    <!-- reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfvtcwtAAAAAH1PsGycXOO47NpEWSroytMBSQaH" async defer></script>
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/;
+        frame-src 'self' https://www.google.com/recaptcha/;
+        connect-src 'self' https://www.google.com/recaptcha/;
+        style-src 'self' 'unsafe-inline';
+    ">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-size: 15px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            padding: 36px;
+            max-width: 480px;
+            width: 100%;
+        }
+
+        h1 { color: #333; margin-bottom: 8px; font-size: 1.7em; text-align: center; }
+        .subtitle { color: #999; text-align: center; margin-bottom: 24px; font-size: 0.9em; }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fff;
+            color: #333;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        input:disabled { background: #f5f5f7; cursor: not-allowed; }
+        input.error { border-color: #ff6b6b; }
+        input.success { border-color: #28a745; background-color: #f0f8f5; }
+
+        .row { display: flex; gap: 8px; align-items: stretch; }
+        .row input { flex: 1; min-width: 0; }
+
+        .small-btn {
+            padding: 0 14px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease;
+        }
+        .small-btn:hover:not(:disabled) { background: #764ba2; }
+        .small-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        #otp { letter-spacing: 4px; text-align: center; }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .link-btn:disabled { color: #aaa; cursor: not-allowed; }
+        .link-btn[hidden] { display: none; }
+
+        .hint { font-size: 0.8em; color: #777; margin-top: 5px; min-height: 1em; }
+        .hint.ok { color: #28a745; font-weight: 600; }
+
+        .error-message { color: #ff6b6b; font-size: 0.8em; margin-top: 5px; display: none; }
+
+        .demo-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 6px;
+            font-size: 0.8em;
+        }
+        .demo-note[hidden] { display: none; }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+            font-size: 0.9em;
+        }
+
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+            border: 1px solid #ffeaa7;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
+        .submit-btn:active:not(:disabled) { transform: translateY(0); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: -2px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .register-line { text-align: center; margin-top: 14px; font-size: 0.9em; color: #666; }
+        .register-line a { color: #1a73e8; font-weight: 600; text-decoration: none; }
+        .register-line a:hover, .register-line a:focus-visible { text-decoration: underline; }
+
+        .recaptcha-notice { font-size: 0.72em; color: #999; margin-top: 14px; text-align: center; line-height: 1.5; }
+
+        /* ===== Pop-up (modal) support ===== */
+        .vc-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(20, 16, 40, 0.6);
+            display: none; align-items: center; justify-content: center;
+            padding: 16px; overflow-y: auto;
+        }
+        .vc-overlay.open { display: flex; }
+        .vc-dialog {
+            position: relative; width: 100%; max-width: 480px;
+            background: #fff; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+        .vc-frame { display: block; width: 100%; height: 560px; border: 0; background: #fff; }
+        .vc-close {
+            position: absolute; top: 8px; right: 10px; z-index: 2;
+            width: 32px; height: 32px; border: none; border-radius: 50%;
+            background: #f1f1f5; color: #555; font-size: 22px; line-height: 1; cursor: pointer;
+        }
+        .vc-close:hover, .vc-close:focus-visible { background: #e2e2ea; color: #222; }
+
+        /* When this page is the content of a pop-up: drop the page chrome */
+        html.embedded body { background: transparent; min-height: 0; padding: 0; display: block; }
+        html.embedded .container { box-shadow: none; border-radius: 0; max-width: none; }
+        html.embedded .vc-overlay { display: none !important; }
+        html.embedded .grecaptcha-badge { visibility: hidden; } /* parent page already shows one; notice text stays in the form */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sign In</h1>
+        <p class="subtitle">Welcome back to Verifcore</p>
+
+        <div class="success-message" id="successMessage"></div>
+        <div class="warning-message" id="warningMessage">⚠️ <span id="warningText"></span></div>
+
+        <form id="signinForm" novalidate>
+
+            <!-- Email OR phone -->
+            <div class="form-group">
+                <label for="identifier">Email ID or Phone Number</label>
+                <div class="row">
+                    <input type="text" id="identifier" name="identifier"
+                           placeholder="you@example.com or +919876543210"
+                           autocomplete="username" inputmode="email" aria-describedby="identifierHint identifierError">
+                    <button type="button" class="small-btn" id="sendBtn" disabled>Send OTP</button>
+                </div>
+                <div class="error-message" id="identifierError"></div>
+                <div class="hint" id="identifierHint">For phone, include the country code (e.g. +91…).</div>
+            </div>
+
+            <!-- OTP -->
+            <div class="form-group">
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" name="otp" inputmode="numeric" maxlength="6"
+                       placeholder="6-digit OTP" autocomplete="one-time-code" disabled aria-describedby="otpHint">
+                <div class="demo-note" id="demoNote" hidden></div>
+                <div class="hint" id="otpHint"></div>
+                <button type="button" class="link-btn" id="resendBtn" hidden>Resend OTP</button>
+            </div>
+
+            <button type="submit" class="submit-btn" id="signinBtn" disabled>Sign In</button>
+
+            <p class="register-line">New to Verifcore? <a href="registration.html">Register here</a></p>
+
+            <div class="recaptcha-notice">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Pop-up that hosts the other page -->
+    <div class="vc-overlay" id="vcOverlay" aria-hidden="true">
+        <div class="vc-dialog" role="dialog" aria-modal="true" aria-label="Register">
+            <button type="button" class="vc-close" id="vcClose" aria-label="Close">&times;</button>
+            <iframe class="vc-frame" id="vcFrame" title="Register"></iframe>
+        </div>
+    </div>
+
+    <script>
+    /* =====================================================================
+       POP-UP LINKING between registration.html and signin.html
+       - Top-level page: clicking the link opens the other page in a pop-up.
+       - Inside the pop-up: clicking the link asks the parent to switch
+         (or to just close the pop-up if the parent already is that page).
+       ===================================================================== */
+    (function () {
+        var CURRENT_PAGE = 'signin.html';
+        var OTHER_PAGE   = 'registration.html';
+        var link = document.querySelector('.register-line a');
+        var embedded = window.self !== window.top;
+
+        if (embedded) {
+            if (link) link.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.parent.postMessage({ type: 'verifcore-switch', page: OTHER_PAGE }, '*');
+            });
+            var card = document.querySelector('.container');
+            function postSize() {
+                window.parent.postMessage({ type: 'verifcore-resize', height: Math.ceil(card.getBoundingClientRect().height) }, '*');
+            }
+            if (window.ResizeObserver) new ResizeObserver(postSize).observe(card);
+            window.addEventListener('load', postSize);
+            postSize();
+            return;
+        }
+
+        var overlay = document.getElementById('vcOverlay');
+        var frame   = document.getElementById('vcFrame');
+        var closeBtn = document.getElementById('vcClose');
+        var lastFocus = null;
+
+        function openModal(page) {
+            lastFocus = document.activeElement;
+            frame.style.height = '560px';
+            frame.src = page;
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            closeBtn.focus();
+        }
+        function closeModal() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            frame.src = 'about:blank';          // resets the form inside the pop-up
+            document.body.style.overflow = '';
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+
+        if (link) link.addEventListener('click', function (e) {
+            e.preventDefault();
+            openModal(OTHER_PAGE);
+        });
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+        });
+
+        window.addEventListener('message', function (e) {
+            if (e.source !== frame.contentWindow || !e.data) return;
+            if (e.data.type === 'verifcore-resize') {
+                frame.style.height = Math.min(e.data.height, Math.floor(window.innerHeight * 0.92)) + 'px';
+            } else if (e.data.type === 'verifcore-switch') {
+                if (e.data.page === CURRENT_PAGE) closeModal();   // the page behind the pop-up is already the target
+                else openModal(e.data.page);
+            } else if (e.data.type === 'verifcore-redirect') {
+                window.location.href = e.data.url;
+            }
+        });
+    })();
+    </script>
+    <script>
+    /* =====================================================================
+       CONFIGURATION
+       DEMO_MODE = true  -> OTP is generated in the browser and SHOWN ON SCREEN. No email/SMS
+                            is sent and nobody is really signed in. For testing the page only.
+       DEMO_MODE = false -> calls the endpoints below; you must provide the backend.
+       ===================================================================== */
+    const CONFIG = {
+        DEMO_MODE: true,
+        RECAPTCHA_SITE_KEY: '6LfvtcwtAAAAAH1PsGycXOO47NpEWSroytMBSQaH',
+        OTP_LENGTH: 6,
+        OTP_TTL_MS: 5 * 60 * 1000,
+        RESEND_SECONDS: 30,
+        MAX_ATTEMPTS: 5,
+        REDIRECT_AFTER_SIGNIN: 'downloads.html',
+        API: {
+            sendOtp: '/api/signin/otp/send',   // POST {type:'email'|'phone', identifier}
+            signin:  '/api/signin/verify'      // POST {type, identifier, otp, recaptchaToken}
+        }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const form = $('signinForm');
+    const idInput = $('identifier');
+    const otpInput = $('otp');
+    const sendBtn = $('sendBtn');
+    const resendBtn = $('resendBtn');
+    const signinBtn = $('signinBtn');
+
+    const st = { type: null, target: null, otp: null, expires: 0, attempts: 0, sent: false, timer: null };
+
+    /* ---------- identifier parsing ---------- */
+    function parseIdentifier(raw) {
+        const v = raw.trim();
+        if (!v) return null;
+        if (v.includes('@')) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? { type: 'email', value: v.toLowerCase() } : { error: 'Please enter a valid email address' };
+        }
+        const phone = v.replace(/[\s\-().]/g, '');
+        if (!phone.startsWith('+')) return { error: 'Phone number must start with the country code, e.g. +919876543210' };
+        return /^\+\d{7,15}$/.test(phone) ? { type: 'phone', value: phone } : { error: 'Please enter a valid phone number with country code' };
+    }
+
+    /* ---------- ui helpers ---------- */
+    function setError(msg) {
+        const el = $('identifierError');
+        el.textContent = msg || '';
+        el.style.display = msg ? 'block' : 'none';
+        idInput.classList.toggle('error', !!msg);
+    }
+    function setOtpHint(text, ok) { const h = $('otpHint'); h.textContent = text || ''; h.className = 'hint' + (ok ? ' ok' : ''); }
+    function showWarning(msg) { $('warningText').textContent = msg; $('warningMessage').style.display = 'block'; }
+    function hideWarning() { $('warningMessage').style.display = 'none'; }
+
+    async function api(url, body) {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Request failed (' + res.status + ')');
+        return data;
+    }
+
+    function genOtp() {
+        const n = crypto.getRandomValues(new Uint32Array(1))[0] % Math.pow(10, CONFIG.OTP_LENGTH);
+        return String(n).padStart(CONFIG.OTP_LENGTH, '0');
+    }
+
+    function updateButtons() {
+        const parsed = parseIdentifier(idInput.value);
+        sendBtn.disabled = !(parsed && parsed.type) || (st.sent && st.target === parsed.value && st.timer !== null);
+        signinBtn.disabled = !(st.sent && otpInput.value.length === CONFIG.OTP_LENGTH);
+    }
+
+    function resetOtp() {
+        clearInterval(st.timer);
+        Object.assign(st, { type: null, target: null, otp: null, expires: 0, attempts: 0, sent: false, timer: null });
+        otpInput.value = '';
+        otpInput.disabled = true;
+        resendBtn.hidden = true;
+        $('demoNote').hidden = true;
+        sendBtn.textContent = 'Send OTP';
+        setOtpHint('');
+        updateButtons();
+    }
+
+    function startCooldown() {
+        let left = CONFIG.RESEND_SECONDS;
+        resendBtn.hidden = false;
+        resendBtn.disabled = true;
+        resendBtn.textContent = 'Resend OTP (' + left + 's)';
+        clearInterval(st.timer);
+        st.timer = setInterval(() => {
+            left--;
+            if (left <= 0) {
+                clearInterval(st.timer);
+                st.timer = null;
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend OTP';
+                updateButtons();
+            } else {
+                resendBtn.textContent = 'Resend OTP (' + left + 's)';
+            }
+        }, 1000);
+    }
+
+    /* ---------- send OTP ---------- */
+    async function sendOtp() {
+        hideWarning();
+        const parsed = parseIdentifier(idInput.value);
+        if (!parsed || parsed.error) { setError(parsed && parsed.error ? parsed.error : 'Enter your email or phone number'); return; }
+        setError('');
+        sendBtn.disabled = true;
+        resendBtn.disabled = true;
+        sendBtn.innerHTML = '<span class="spinner"></span>Sending';
+        try {
+            if (CONFIG.DEMO_MODE) {
+                st.otp = genOtp();
+                st.expires = Date.now() + CONFIG.OTP_TTL_MS;
+                const note = $('demoNote');
+                note.hidden = false;
+                note.textContent = 'DEMO MODE: no ' + (parsed.type === 'email' ? 'email' : 'SMS') + ' is sent. Your OTP is ' + st.otp + '.';
+            } else {
+                await api(CONFIG.API.sendOtp, { type: parsed.type, identifier: parsed.value });
+            }
+            st.type = parsed.type;
+            st.target = parsed.value;
+            st.attempts = 0;
+            st.sent = true;
+            otpInput.disabled = false;
+            otpInput.value = '';
+            otpInput.focus();
+            sendBtn.textContent = 'OTP sent';
+            setOtpHint('Enter the OTP sent to your ' + parsed.type + '.');
+            startCooldown();
+        } catch (err) {
+            sendBtn.textContent = 'Send OTP';
+            showWarning('Could not send OTP: ' + err.message);
+        } finally {
+            updateButtons();
+        }
+    }
+
+    /* ---------- reCAPTCHA v3 ---------- */
+    function getRecaptchaToken() {
+        return new Promise((resolve, reject) => {
+            if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
+                return CONFIG.DEMO_MODE ? resolve(null) : reject(new Error('reCAPTCHA not loaded'));
+            }
+            grecaptcha.ready(() => {
+                grecaptcha.execute(CONFIG.RECAPTCHA_SITE_KEY, { action: 'signin' }).then(resolve, (err) => {
+                    CONFIG.DEMO_MODE ? resolve(null) : reject(err);
+                });
+            });
+        });
+    }
+
+    /* ---------- events ---------- */
+    idInput.addEventListener('input', () => {
+        setError('');
+        // Any change to the email/phone invalidates the OTP that was sent
+        if (st.sent) resetOtp();
+        updateButtons();
+    });
+    idInput.addEventListener('blur', () => {
+        const p = parseIdentifier(idInput.value);
+        if (p && p.error) setError(p.error);
+    });
+    idInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!sendBtn.disabled) sendOtp(); } });
+
+    otpInput.addEventListener('input', () => {
+        otpInput.value = otpInput.value.replace(/\D/g, '');
+        updateButtons();
+    });
+
+    sendBtn.addEventListener('click', sendOtp);
+    resendBtn.addEventListener('click', sendOtp);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideWarning();
+        $('successMessage').style.display = 'none';
+
+        const code = otpInput.value.trim();
+        if (!st.sent) { showWarning('Please request an OTP first.'); return; }
+        if (code.length !== CONFIG.OTP_LENGTH) { setOtpHint('Enter the ' + CONFIG.OTP_LENGTH + '-digit OTP.'); return; }
+        if (st.attempts >= CONFIG.MAX_ATTEMPTS) { setOtpHint('Too many attempts. Please resend a new OTP.'); return; }
+        st.attempts++;
+
+        const original = signinBtn.innerHTML;
+        signinBtn.disabled = true;
+        signinBtn.innerHTML = '<span class="spinner"></span>Signing in...';
+
+        try {
+            if (CONFIG.DEMO_MODE) {
+                if (Date.now() > st.expires) throw new Error('OTP expired. Please resend.');
+                if (code !== st.otp) throw new Error('Incorrect OTP (' + (CONFIG.MAX_ATTEMPTS - st.attempts) + ' attempts left).');
+                $('successMessage').textContent = '✓ Demo: OTP accepted. Nobody was actually signed in (DEMO_MODE is on).';
+                $('successMessage').style.display = 'block';
+                form.reset();
+                resetOtp();
+            } else {
+                const recaptchaToken = await getRecaptchaToken();
+                await api(CONFIG.API.signin, { type: st.type, identifier: st.target, otp: code, recaptchaToken: recaptchaToken });
+                $('successMessage').textContent = '✓ Signed in successfully. Redirecting...';
+                $('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    if (window.self !== window.top) window.parent.postMessage({ type: 'verifcore-redirect', url: CONFIG.REDIRECT_AFTER_SIGNIN }, '*');
+                    else window.location.href = CONFIG.REDIRECT_AFTER_SIGNIN;
+                }, 800);
+            }
+        } catch (err) {
+            setOtpHint(err.message);
+            showWarning(err.message);
+        } finally {
+            signinBtn.innerHTML = original;
+            updateButtons();
+        }
+    });
+
+    updateButtons();
+    </script>
+</body>
+</html>
