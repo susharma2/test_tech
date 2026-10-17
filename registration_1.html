@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        /* Mark the page when it is shown inside the pop-up iframe (set early to avoid a flash of the full-page layout) */
+        if (window.self !== window.top) document.documentElement.classList.add('embedded');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifcore - User Registration</title>
+    <!-- reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfvtcwtAAAAAH1PsGycXOO47NpEWSroytMBSQaH" async defer></script>
+    <!-- Content Security Policy
+         FIX: 'unsafe-inline' added to script-src. Without it the browser blocked the page's
+         inline <script>, so the Submit button was never enabled. -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/;
+        frame-src 'self' https://www.google.com/recaptcha/;
+        connect-src 'self' https://www.google.com/recaptcha/;
+        style-src 'self' 'unsafe-inline';
+    ">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-size: 15px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            padding: 36px;
+            max-width: 480px;
+            width: 100%;
+        }
+
+        h1 { color: #333; margin-bottom: 8px; font-size: 1.7em; text-align: center; }
+
+        .subtitle { color: #999; text-align: center; margin-bottom: 24px; font-size: 0.9em; }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px 13px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fff;
+            color: #333;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error, select.error { border-color: #ff6b6b; }
+        input.success { border-color: #28a745; background-color: #f0f8f5; }
+
+        .row { display: flex; gap: 8px; align-items: stretch; }
+        .row input { flex: 1; min-width: 0; }
+        .phone-row { gap: 6px; }
+        .phone-row .country-code {
+            flex: 0 0 122px;
+            width: 122px;
+            min-width: 0;
+            padding: 11px 7px;
+            font-size: 0.88em;
+        }
+        .phone-row .verify-btn { padding: 0 10px; }
+        @media (max-width: 420px) {
+            .container { padding: 24px 18px; }
+            .phone-row { gap: 5px; }
+            .phone-row .country-code { flex-basis: 105px; width: 105px; font-size: 0.82em; }
+            .phone-row .verify-btn { padding: 0 7px; font-size: 0.74em; }
+        }
+
+        .verify-btn {
+            padding: 0 14px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease;
+        }
+        .verify-btn:hover:not(:disabled) { background: #764ba2; }
+        .verify-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .verify-btn.done { background: #28a745; opacity: 1; }
+
+        .otp-box { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+        .otp-box[hidden] { display: none; }
+        .otp-box input { flex: 1; min-width: 0; letter-spacing: 3px; text-align: center; }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .link-btn:disabled { color: #aaa; cursor: not-allowed; }
+
+        .hint { font-size: 0.8em; color: #777; margin-top: 5px; min-height: 1em; }
+        .hint.ok { color: #28a745; font-weight: 600; }
+
+        .demo-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 6px;
+            font-size: 0.8em;
+        }
+        .demo-note[hidden] { display: none; }
+
+        .error-message { color: #ff6b6b; font-size: 0.8em; margin-top: 5px; display: none; }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+            font-size: 0.9em;
+        }
+
+        .info-message {
+            background: #e2e3e5;
+            color: #383d41;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+            border: 1px solid #ffeaa7;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
+        .submit-btn:active:not(:disabled) { transform: translateY(0); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: -2px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .signin-line { text-align: center; margin-top: 12px; font-size: 0.9em; }
+        .signin-line a { color: #1a73e8; text-decoration: none; font-weight: 600; }
+        .signin-line a:hover, .signin-line a:focus-visible { text-decoration: underline; }
+        .submit-hint { font-size: 0.8em; color: #999; text-align: center; margin-top: 8px; }
+
+        .recaptcha-notice { font-size: 0.72em; color: #999; margin-top: 14px; text-align: center; line-height: 1.5; }
+        .global-note { text-align: center; color: #999; font-size: 0.8em; margin-top: 16px; }
+        .required { color: #ff6b6b; }
+
+        /* ===== Pop-up (modal) support ===== */
+        .vc-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(20, 16, 40, 0.6);
+            display: none; align-items: center; justify-content: center;
+            padding: 16px; overflow-y: auto;
+        }
+        .vc-overlay.open { display: flex; }
+        .vc-dialog {
+            position: relative; width: 100%; max-width: 480px;
+            background: #fff; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+        .vc-frame { display: block; width: 100%; height: 560px; border: 0; background: #fff; }
+        .vc-close {
+            position: absolute; top: 8px; right: 10px; z-index: 2;
+            width: 32px; height: 32px; border: none; border-radius: 50%;
+            background: #f1f1f5; color: #555; font-size: 22px; line-height: 1; cursor: pointer;
+        }
+        .vc-close:hover, .vc-close:focus-visible { background: #e2e2ea; color: #222; }
+
+        /* When this page is the content of a pop-up: drop the page chrome */
+        html.embedded body { background: transparent; min-height: 0; padding: 0; display: block; }
+        html.embedded .container { box-shadow: none; border-radius: 0; max-width: none; }
+        html.embedded .vc-overlay { display: none !important; }
+        html.embedded .grecaptcha-badge { visibility: hidden; } /* parent page already shows one; notice text stays in the form */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verifcore Registration</h1>
+        <p class="subtitle">Join our global community</p>
+
+        <div class="success-message" id="successMessage"></div>
+        <div class="warning-message" id="warningMessage">⚠️ <span id="warningText"></span></div>
+
+        <div class="info-message">
+            📱 Open to users <strong>worldwide</strong>. Verify your email and phone number to enable registration.
+        </div>
+
+        <form id="registrationForm" novalidate>
+
+            <!-- Full name -->
+            <div class="form-group">
+                <label for="fullName">Full Name <span class="required">*</span></label>
+                <input type="text" id="fullName" name="fullName" placeholder="Your full name"
+                       required autocomplete="name" aria-describedby="fullNameError">
+                <div class="error-message" id="fullNameError"></div>
+            </div>
+
+            <!-- Email + OTP -->
+            <div class="form-group">
+                <label for="email">Email ID <span class="required">*</span></label>
+                <div class="row">
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com"
+                           required autocomplete="email" aria-describedby="emailError">
+                    <button type="button" class="verify-btn" id="emailVerifyBtn" disabled>Verify now</button>
+                </div>
+                <div class="error-message" id="emailError"></div>
+                <div class="otp-box" id="emailOtpBox" hidden>
+                    <input type="text" id="emailOtp" inputmode="numeric" maxlength="6"
+                           placeholder="6-digit OTP" autocomplete="one-time-code" aria-label="Email OTP">
+                    <button type="button" class="verify-btn" id="emailConfirmBtn">Confirm</button>
+                    <button type="button" class="link-btn" id="emailResendBtn" disabled>Resend</button>
+                </div>
+                <div class="demo-note" id="emailDemo" hidden></div>
+                <div class="hint" id="emailHint"></div>
+            </div>
+
+            <!-- Phone + OTP -->
+            <div class="form-group">
+                <label for="phone">Phone Number <span class="required">*</span></label>
+                <div class="row phone-row">
+                <select id="countryCode" class="country-code" name="countryCode" required aria-label="Country calling code" title="Country calling code" aria-describedby="countryError">
+                    <option value="">Select country code</option>
+                    <option value="+61">Australia (+61)</option>
+                    <option value="+880">Bangladesh (+880)</option>
+                    <option value="+32">Belgium (+32)</option>
+                    <option value="+55">Brazil (+55)</option>
+                    <option value="+1">Canada (+1)</option>
+                    <option value="+86">China (+86)</option>
+                    <option value="+20">Egypt (+20)</option>
+                    <option value="+33">France (+33)</option>
+                    <option value="+49">Germany (+49)</option>
+                    <option value="+852">Hong Kong (+852)</option>
+                    <option value="+91">India (+91)</option>
+                    <option value="+62">Indonesia (+62)</option>
+                    <option value="+353">Ireland (+353)</option>
+                    <option value="+972">Israel (+972)</option>
+                    <option value="+39">Italy (+39)</option>
+                    <option value="+81">Japan (+81)</option>
+                    <option value="+60">Malaysia (+60)</option>
+                    <option value="+52">Mexico (+52)</option>
+                    <option value="+977">Nepal (+977)</option>
+                    <option value="+31">Netherlands (+31)</option>
+                    <option value="+64">New Zealand (+64)</option>
+                    <option value="+234">Nigeria (+234)</option>
+                    <option value="+92">Pakistan (+92)</option>
+                    <option value="+63">Philippines (+63)</option>
+                    <option value="+48">Poland (+48)</option>
+                    <option value="+7">Russia (+7)</option>
+                    <option value="+966">Saudi Arabia (+966)</option>
+                    <option value="+65">Singapore (+65)</option>
+                    <option value="+27">South Africa (+27)</option>
+                    <option value="+82">South Korea (+82)</option>
+                    <option value="+34">Spain (+34)</option>
+                    <option value="+94">Sri Lanka (+94)</option>
+                    <option value="+46">Sweden (+46)</option>
+                    <option value="+41">Switzerland (+41)</option>
+                    <option value="+886">Taiwan (+886)</option>
+                    <option value="+66">Thailand (+66)</option>
+                    <option value="+90">Turkey (+90)</option>
+                    <option value="+971">United Arab Emirates (+971)</option>
+                    <option value="+44">United Kingdom (+44)</option>
+                    <option value="+1">United States (+1)</option>
+                    <option value="+84">Vietnam (+84)</option>
+                </select>
+                    <input type="tel" id="phone" name="phone" placeholder="Phone number"
+                           required autocomplete="tel-national" inputmode="tel" aria-describedby="phoneError">
+                    <button type="button" class="verify-btn" id="phoneVerifyBtn" disabled>Verify now</button>
+                </div>
+                <div class="error-message" id="countryError"></div>
+                <div class="error-message" id="phoneError"></div>
+                <div class="otp-box" id="phoneOtpBox" hidden>
+                    <input type="text" id="phoneOtp" inputmode="numeric" maxlength="6"
+                           placeholder="6-digit OTP" autocomplete="one-time-code" aria-label="Phone OTP">
+                    <button type="button" class="verify-btn" id="phoneConfirmBtn">Confirm</button>
+                    <button type="button" class="link-btn" id="phoneResendBtn" disabled>Resend</button>
+                </div>
+                <div class="demo-note" id="phoneDemo" hidden></div>
+                <div class="hint" id="phoneHint"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>Submit</button>
+            <p class="signin-line"><a href="signin.html">Already registered? Sign in here</a></p>
+            <div class="submit-hint" id="submitHint">Enter your name and verify both email and phone to continue.</div>
+
+            <div class="recaptcha-notice">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+            </div>
+        </form>
+
+        <div class="global-note">Your data is secure and will only be used for service updates.</div>
+    </div>
+
+
+    <!-- Pop-up that hosts the other page -->
+    <div class="vc-overlay" id="vcOverlay" aria-hidden="true">
+        <div class="vc-dialog" role="dialog" aria-modal="true" aria-label="Sign in">
+            <button type="button" class="vc-close" id="vcClose" aria-label="Close">&times;</button>
+            <iframe class="vc-frame" id="vcFrame" title="Sign in"></iframe>
+        </div>
+    </div>
+
+    <script>
+    /* =====================================================================
+       POP-UP LINKING between registration.html and signin.html
+       - Top-level page: clicking the link opens the other page in a pop-up.
+       - Inside the pop-up: clicking the link asks the parent to switch
+         (or to just close the pop-up if the parent already is that page).
+       ===================================================================== */
+    (function () {
+        var CURRENT_PAGE = 'registration.html';
+        var OTHER_PAGE   = 'signin.html';
+        var link = document.querySelector('.signin-line a');
+        var embedded = window.self !== window.top;
+
+        if (embedded) {
+            if (link) link.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.parent.postMessage({ type: 'verifcore-switch', page: OTHER_PAGE }, '*');
+            });
+            var card = document.querySelector('.container');
+            function postSize() {
+                window.parent.postMessage({ type: 'verifcore-resize', height: Math.ceil(card.getBoundingClientRect().height) }, '*');
+            }
+            if (window.ResizeObserver) new ResizeObserver(postSize).observe(card);
+            window.addEventListener('load', postSize);
+            postSize();
+            return;
+        }
+
+        var overlay = document.getElementById('vcOverlay');
+        var frame   = document.getElementById('vcFrame');
+        var closeBtn = document.getElementById('vcClose');
+        var lastFocus = null;
+
+        function openModal(page) {
+            lastFocus = document.activeElement;
+            frame.style.height = '560px';
+            frame.src = page;
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            closeBtn.focus();
+        }
+        function closeModal() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            frame.src = 'about:blank';          // resets the form inside the pop-up
+            document.body.style.overflow = '';
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+
+        if (link) link.addEventListener('click', function (e) {
+            e.preventDefault();
+            openModal(OTHER_PAGE);
+        });
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+        });
+
+        window.addEventListener('message', function (e) {
+            if (e.source !== frame.contentWindow || !e.data) return;
+            if (e.data.type === 'verifcore-resize') {
+                frame.style.height = Math.min(e.data.height, Math.floor(window.innerHeight * 0.92)) + 'px';
+            } else if (e.data.type === 'verifcore-switch') {
+                if (e.data.page === CURRENT_PAGE) closeModal();   // the page behind the pop-up is already the target
+                else openModal(e.data.page);
+            } else if (e.data.type === 'verifcore-redirect') {
+                window.location.href = e.data.url;
+            }
+        });
+    })();
+    </script>
+    <script>
+    /* =====================================================================
+       CONFIGURATION
+       DEMO_MODE = true  -> works on a static site (e.g. GitHub Pages). The OTP is generated
+                            in the browser and SHOWN ON SCREEN. No email/SMS is sent and
+                            nothing is saved. For testing the page flow only.
+       DEMO_MODE = false -> calls the endpoints below. You must provide a backend that
+                            sends real email/SMS OTPs (see README notes in the reply).
+       ===================================================================== */
+    const CONFIG = {
+        DEMO_MODE: true,
+        RECAPTCHA_SITE_KEY: '6LfvtcwtAAAAAH1PsGycXOO47NpEWSroytMBSQaH',
+        OTP_LENGTH: 6,
+        OTP_TTL_MS: 5 * 60 * 1000,
+        RESEND_SECONDS: 30,
+        MAX_ATTEMPTS: 5,
+        API: {
+            emailSend:   '/api/otp/email/send',    // POST {email}
+            emailVerify: '/api/otp/email/verify',  // POST {email, otp}
+            phoneSend:   '/api/otp/phone/send',    // POST {phone}  (E.164, e.g. +919876543210)
+            phoneVerify: '/api/otp/phone/verify',  // POST {phone, otp}
+            register:    '/api/register'           // POST {fullName, email, phone, recaptchaToken, timestamp}
+        }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const form = $('registrationForm');
+    const submitBtn = $('submitBtn');
+    const fullNameInput = $('fullName');
+    const countrySelect = $('countryCode');
+
+    /* ---------- helpers ---------- */
+    function validateName(v) { return v.trim().length >= 2; }
+    function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+    function nationalDigits(v) { return v.replace(/\D/g, '').replace(/^0+/, ''); }
+    function validatePhoneNumber(v) {
+        const d = nationalDigits(v);
+        const cc = countrySelect.value.replace(/\D/g, '');
+        return d.length >= 6 && (cc.length + d.length) <= 15;
+    }
+    function fullPhone() { return countrySelect.value + nationalDigits($('phone').value); }
+
+    function showError(id, msg) {
+        const el = $(id + 'Error');
+        el.textContent = msg;
+        el.style.display = 'block';
+        const field = $(id) || null;
+        if (field) field.classList.add('error');
+    }
+    function clearError(id) {
+        $(id + 'Error').style.display = 'none';
+        const field = $(id);
+        if (field) field.classList.remove('error');
+    }
+    function showWarning(msg) { $('warningText').textContent = msg; $('warningMessage').style.display = 'block'; }
+    function hideWarning() { $('warningMessage').style.display = 'none'; }
+
+    async function api(url, body) {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Request failed (' + res.status + ')');
+        return data;
+    }
+
+    function genOtp() {
+        const n = crypto.getRandomValues(new Uint32Array(1))[0] % Math.pow(10, CONFIG.OTP_LENGTH);
+        return String(n).padStart(CONFIG.OTP_LENGTH, '0');
+    }
+
+    /* ---------- OTP verifier (used for both email and phone) ---------- */
+    function createVerifier(kind, opts) {
+        const input = opts.input;
+        const verifyBtn = $(kind + 'VerifyBtn');
+        const otpBox = $(kind + 'OtpBox');
+        const otpInput = $(kind + 'Otp');
+        const confirmBtn = $(kind + 'ConfirmBtn');
+        const resendBtn = $(kind + 'ResendBtn');
+        const hint = $(kind + 'Hint');
+        const demo = $(kind + 'Demo');
+        const label = kind === 'email' ? 'email' : 'phone';
+
+        const s = { verified: false, target: null, otp: null, expires: 0, attempts: 0, timer: null };
+
+        function setHint(text, ok) { hint.textContent = text || ''; hint.className = 'hint' + (ok ? ' ok' : ''); }
+
+        function refreshVerifyBtn() {
+            if (s.verified) return;
+            verifyBtn.disabled = !opts.isValid();
+            verifyBtn.textContent = 'Verify now';
+            verifyBtn.classList.remove('done');
+        }
+
+        function reset() {
+            clearInterval(s.timer);
+            Object.assign(s, { verified: false, target: null, otp: null, expires: 0, attempts: 0, timer: null });
+            otpBox.hidden = true;
+            demo.hidden = true;
+            otpInput.value = '';
+            input.classList.remove('success');
+            if (opts.extraInputs) opts.extraInputs.forEach(i => { i.disabled = false; });
+            input.readOnly = false;
+            setHint('');
+            refreshVerifyBtn();
+            updateSubmit();
+        }
+
+        function startCooldown() {
+            let left = CONFIG.RESEND_SECONDS;
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Resend (' + left + 's)';
+            clearInterval(s.timer);
+            s.timer = setInterval(() => {
+                left--;
+                if (left <= 0) {
+                    clearInterval(s.timer);
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = 'Resend';
+                } else {
+                    resendBtn.textContent = 'Resend (' + left + 's)';
+                }
+            }, 1000);
+        }
+
+        async function send() {
+            hideWarning();
+            if (!opts.isValid()) { opts.showInvalid(); return; }
+            const target = opts.getTarget();
+            verifyBtn.disabled = true;
+            resendBtn.disabled = true;
+            verifyBtn.innerHTML = '<span class="spinner"></span>Sending';
+            try {
+                if (CONFIG.DEMO_MODE) {
+                    s.otp = genOtp();
+                    s.expires = Date.now() + CONFIG.OTP_TTL_MS;
+                    demo.hidden = false;
+                    demo.textContent = 'DEMO MODE: no ' + (kind === 'email' ? 'email' : 'SMS') +
+                        ' is sent. Your OTP is ' + s.otp + '.';
+                } else {
+                    await api(CONFIG.API[kind + 'Send'], { [label]: target });
+                }
+                s.target = target;
+                s.attempts = 0;
+                otpBox.hidden = false;
+                otpInput.value = '';
+                otpInput.focus();
+                verifyBtn.textContent = 'OTP sent';
+                setHint('Enter the OTP sent to your ' + label + '.');
+                startCooldown();
+            } catch (err) {
+                setHint('');
+                showWarning('Could not send OTP: ' + err.message);
+                verifyBtn.textContent = 'Verify now';
+                verifyBtn.disabled = false;
+            }
+        }
+
+        async function confirm() {
+            hideWarning();
+            const code = otpInput.value.trim();
+            if (code.length !== CONFIG.OTP_LENGTH) { setHint('Enter the ' + CONFIG.OTP_LENGTH + '-digit OTP.'); return; }
+            if (s.attempts >= CONFIG.MAX_ATTEMPTS) { setHint('Too many attempts. Please resend a new OTP.'); return; }
+            s.attempts++;
+            confirmBtn.disabled = true;
+            try {
+                let ok = false;
+                if (CONFIG.DEMO_MODE) {
+                    if (Date.now() > s.expires) { setHint('OTP expired. Please resend.'); return; }
+                    ok = code === s.otp;
+                } else {
+                    const data = await api(CONFIG.API[kind + 'Verify'], { [label]: s.target, otp: code });
+                    ok = data.verified !== false;
+                }
+                if (ok) {
+                    s.verified = true;
+                    clearInterval(s.timer);
+                    otpBox.hidden = true;
+                    demo.hidden = true;
+                    input.classList.add('success');
+                    input.readOnly = true;
+                    if (opts.extraInputs) opts.extraInputs.forEach(i => { i.disabled = true; });
+                    verifyBtn.textContent = '✓ Verified';
+                    verifyBtn.classList.add('done');
+                    verifyBtn.disabled = true;
+                    setHint(label === 'email' ? 'Email verified' : 'Phone verified', true);
+                    updateSubmit();
+                } else {
+                    setHint('Incorrect OTP (' + (CONFIG.MAX_ATTEMPTS - s.attempts) + ' attempts left).');
+                }
+            } catch (err) {
+                setHint(err.message);
+            } finally {
+                confirmBtn.disabled = false;
+            }
+        }
+
+        verifyBtn.addEventListener('click', send);
+        resendBtn.addEventListener('click', send);
+        confirmBtn.addEventListener('click', confirm);
+        otpInput.addEventListener('input', () => { otpInput.value = otpInput.value.replace(/\D/g, ''); });
+        otpInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); confirm(); } });
+
+        return { state: s, reset, refreshVerifyBtn, isVerified: () => s.verified };
+    }
+
+    /* ---------- wire up email + phone ---------- */
+    const emailInput = $('email');
+    const phoneInput = $('phone');
+
+    const emailV = createVerifier('email', {
+        input: emailInput,
+        isValid: () => validateEmail(emailInput.value),
+        getTarget: () => emailInput.value.trim().toLowerCase(),
+        showInvalid: () => showError('email', 'Please enter a valid email address')
+    });
+
+    const phoneV = createVerifier('phone', {
+        input: phoneInput,
+        extraInputs: [countrySelect],
+        isValid: () => !!countrySelect.value && validatePhoneNumber(phoneInput.value),
+        getTarget: fullPhone,
+        showInvalid: () => {
+            if (!countrySelect.value) showError('country', 'Please select your country code');
+            else showError('phone', 'Please enter a valid phone number');
+        }
+    });
+
+    // Editing a field after OTP was requested/verified resets that verification
+    emailInput.addEventListener('input', () => {
+        clearError('email');
+        if (emailV.state.target !== null || emailV.isVerified()) emailV.reset();
+        emailV.refreshVerifyBtn();
+        updateSubmit();
+    });
+    phoneInput.addEventListener('input', () => {
+        clearError('phone');
+        if (phoneV.state.target !== null || phoneV.isVerified()) phoneV.reset();
+        phoneV.refreshVerifyBtn();
+        updateSubmit();
+    });
+    countrySelect.addEventListener('change', () => {
+        $('countryError').style.display = 'none';
+        countrySelect.classList.remove('error');
+        if (phoneV.state.target !== null || phoneV.isVerified()) phoneV.reset();
+        phoneV.refreshVerifyBtn();
+        updateSubmit();
+    });
+    fullNameInput.addEventListener('input', () => { clearError('fullName'); updateSubmit(); });
+
+    emailInput.addEventListener('blur', () => {
+        if (emailInput.value && !validateEmail(emailInput.value)) showError('email', 'Invalid email format');
+    });
+    phoneInput.addEventListener('blur', () => {
+        if (phoneInput.value && countrySelect.value && !validatePhoneNumber(phoneInput.value))
+            showError('phone', 'Invalid phone number');
+    });
+
+    /* ---------- enable / disable Submit ---------- */
+    function updateSubmit() {
+        const ready = validateName(fullNameInput.value) && emailV.isVerified() && phoneV.isVerified();
+        submitBtn.disabled = !ready;
+        $('submitHint').style.display = ready ? 'none' : 'block';
+    }
+
+    /* ---------- reCAPTCHA v3 ---------- */
+    function getRecaptchaToken() {
+        return new Promise((resolve, reject) => {
+            if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
+                return CONFIG.DEMO_MODE ? resolve(null) : reject(new Error('reCAPTCHA not loaded'));
+            }
+            grecaptcha.ready(() => {
+                grecaptcha.execute(CONFIG.RECAPTCHA_SITE_KEY, { action: 'submit' }).then(resolve, (err) => {
+                    CONFIG.DEMO_MODE ? resolve(null) : reject(err);
+                });
+            });
+        });
+    }
+
+    /* ---------- submit ---------- */
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideWarning();
+        $('successMessage').style.display = 'none';
+
+        if (!validateName(fullNameInput.value)) { showError('fullName', 'Please enter your full name'); return; }
+        if (!emailV.isVerified() || !phoneV.isVerified()) {
+            showWarning('Please verify both your email and phone number first.');
+            return;
+        }
+
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+        try {
+            const recaptchaToken = await getRecaptchaToken();
+
+            if (CONFIG.DEMO_MODE) {
+                $('successMessage').textContent = '✓ Demo: form flow completed. Nothing was saved (DEMO_MODE is on).';
+            } else {
+                await api(CONFIG.API.register, {
+                    fullName: fullNameInput.value.trim(),
+                    email: emailInput.value.trim().toLowerCase(),
+                    phone: fullPhone(),
+                    recaptchaToken: recaptchaToken,
+                    timestamp: new Date().toISOString()
+                });
+                $('successMessage').textContent = '✓ Registration successful! Your email and phone are verified.';
+            }
+            $('successMessage').style.display = 'block';
+            form.reset();
+            emailV.reset();
+            phoneV.reset();
+        } catch (err) {
+            console.error('Registration error:', err);
+            showWarning(err.message || 'Registration failed. Please try again.');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            updateSubmit();
+        }
+    });
+
+    updateSubmit();
+    </script>
+</body>
+</html>
